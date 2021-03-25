@@ -1,3 +1,5 @@
+//Didn't work the first time.. so lets take it step by step and compare to a Java implementation.
+
 module sha2_tb();
     reg CLK;
     reg RST;
