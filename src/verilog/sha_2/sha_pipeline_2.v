@@ -1533,8 +1533,6 @@ module sha256_2_pipeline(
 		end
 		else begin
 			if(write_en == 1'b1 & counter_reg==65) begin
-			    //$monitor("At time %t, value = %h (%0d) valid %h",$time, do, do, vo);
-			    $monitor("Assign");
                 valid_out_reg <=1'b1;
                 counter_reg <= counter_reg;
                 //Last step of MC is to add results of 64 rounds to previous result
@@ -1550,7 +1548,6 @@ module sha256_2_pipeline(
                 digest_out_reg[31:0] <= digest_intial[31:0] + digest_loop_63[31:0];
 			end
 			else if(write_en == 1'b1) begin
-			    $monitor("Foo: At time %t, value = %h ",$time, counter_reg);
 				counter_reg <= counter_reg + 1;
 				valid_out_reg <= 1'b0;
 				digest_out_reg <= 256'b0;

@@ -1,4 +1,5 @@
 
+import javax.xml.bind.DatatypeConverter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -164,7 +165,7 @@ public class ShaHack {
            W[t] = lf_delta1(W[t-2]) + W[t-7] + lf_delta0(W[t-15])
                   + W[t-16];
        }
-
+//f101a256 8c20298a db8592dc 5dc2db56
        int a = state[0];
        int b = state[1];
        int c = state[2];
@@ -185,6 +186,20 @@ public class ShaHack {
            c = b;
            b = a;
            a = T1 + T2;
+
+
+           byte[] debugBuf = new byte[32];
+           ByteBuffer wrapped = ByteBuffer.wrap(debugBuf);
+           wrapped.putInt(0,a);
+           wrapped.putInt(4,b);
+           wrapped.putInt(8,c);
+           wrapped.putInt(12,d);
+           wrapped.putInt(16,e);
+           wrapped.putInt(20,f);
+           wrapped.putInt(24,g);
+           wrapped.putInt(28,h);
+           String hexdump = DatatypeConverter.printHexBinary(debugBuf) ;
+           System.out.println(hexdump);
        }
        state[0] += a;
        state[1] += b;

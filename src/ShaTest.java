@@ -89,36 +89,10 @@ public class ShaTest {
         String padding2 = "80000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000100";
         String hashResult = "5c8ad782c007cc563f8db735180b35dab8c983d172b57e2c2701000000000000"; //This is the resulting successfull hash.
 
-//        byte[] bver = DatatypeConverter.parseHexBinary(version);
-//        byte[] bhashprev = DatatypeConverter.parseHexBinary(hashPrevBlock);
-//        byte[] bmerkle = DatatypeConverter.parseHexBinary(merkleRoot);
-//        byte[] btime = DatatypeConverter.parseHexBinary(time);
-//        byte[] bdiff = DatatypeConverter.parseHexBinary(difficulty);
-//        byte[] bsuccess = DatatypeConverter.parseHexBinary(successNonce);
 
         byte[] msg1 = DatatypeConverter.parseHexBinary(version + hashPrevBlock + merkleRoot_a );
         byte[] msg2 = DatatypeConverter.parseHexBinary(merkleRoot_b + time + difficulty + successNonce + padding );
 
-
-//        byte[] firstInput  = new byte[]{0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-//                                        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-//                                        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-//                                        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,(byte)0xFF };
-//
-//        byte[] secondInput = new byte[]{0x00,0x00,0x00,0x01, 0x00,0x00,0x00,0x02, 0x00,0x00,0x00,0x03, 0x00,0x00,0x00,0x04, //Only changeable stuff
-//
-//                                        (byte)0x80,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-//                                        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-//                                        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,(byte)0x80 };
-
-                                            //8 ... 280
-//        dii=256'h0000000000000000000000000000000000000000000000000000000000000011;
-//        di =256'h0000000000000000000000000000000000000000000000000000000000000011;
-//        bi =127'h000000000000000000000000000000FF;
-//        #1
-//        dii=256'h0000000000000000000000000000000000000000000000000000000000000022;
-//        di =256'h0000000000000000000000000000000000000000000000000000000000000022;
-//        bi =127'h000000000000000000000000000000EE;
 
         https://github.com/aseemgautam/bitcoin-sha256
 
@@ -134,6 +108,7 @@ public class ShaTest {
             digest.implReset();
             byte[] out3 = digest.digest(msg3);
 
+            System.out.println("#############################");
             System.out.println( DatatypeConverter.printHexBinary(out1) );
             System.out.println( DatatypeConverter.printHexBinary(out2) );
             System.out.println( DatatypeConverter.printHexBinary(out3) );
