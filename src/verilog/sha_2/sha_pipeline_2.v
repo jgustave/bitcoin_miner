@@ -145,7 +145,7 @@ module sha256_2_pipeline(
 
 	// wi
 
-    //Known values of w since they are constant.
+    //Known values of w since they are constant. (JD)This is correct.. First 4 bytes we control.
 	parameter [31:0] w_i_loop_4 = 32'h80000000;
 	parameter [31:0] w_i_loop_5 = 32'h0;
 	parameter [31:0] w_i_loop_6 = 32'h0;
@@ -799,7 +799,7 @@ module sha256_2_pipeline(
 		.k_i(k_4),
 
 		.w_i(w_i_loop_4),
-		.digest_in(digest_in), //Note digest_in .. what is this?
+		.digest_in(digest_in), //Note digest_in .. what is this? How are we skipping 4?
 		.digest_out(digest_loop_4)
 	);
 	main_loop_for_pipeline_4to63 ins_main_loop_5(

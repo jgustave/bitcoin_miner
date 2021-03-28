@@ -14,7 +14,7 @@ module sha256_w_mem_for_pipeline_58_2(
 									output	wire	[415:0] block_out
 );
 	wire [415:0] block_out_wire;
-	
+
 	mem_save_block_416 mem_b(
 							.CLK(CLK),
 							.RST(RST),
@@ -23,12 +23,12 @@ module sha256_w_mem_for_pipeline_58_2(
 							.block_out(block_out)
 	);
 
-		
+
 	wire [31:0] d0_256;
 	wire [31:0] d1_256;
-	
+
 	wire 	[31:0]  w_i;
-	
+
 	wire 	[31:0]  w1;
 	wire 	[31:0]  w2;
 	wire 	[31:0]  w3;
@@ -44,7 +44,7 @@ module sha256_w_mem_for_pipeline_58_2(
 	wire 	[31:0]  w13;
 	wire 	[31:0]  w14;
 	wire 	[31:0]  w15;
-	
+
 
 	assign w1 = block_in[479:448];
 	assign w2 = block_in[447:416];
@@ -61,17 +61,17 @@ module sha256_w_mem_for_pipeline_58_2(
 	assign w13 = block_in[95:64];
 	assign w14 = block_in[63:32];
 	assign w15 = block_in[31:0];
-	
-	
+
+
 	assign d0_256 = {w2[6:0],w2[31:7],w2[6:0],w2[31:7]}^{w2[17:0],w2[31:18],w2[17:0],w2[31:18]}^{3'b000,w2[31:3],3'b000,w2[31:3]};
 	assign d1_256 = {w14[16:0],w14[31:17],w14[16:0],w14[31:17]}^{w14[18:0],w14[31:19],w14[18:0],w14[31:19]}^{10'b0000000000,w14[31:10],10'b0000000000,w14[31:10]};
 
-	
+	//TODO: block_in 224-255 are unconnected
 //////
 
-	assign w_i = d0_256 + w9 + d1_256 + w1;  
+	assign w_i = d0_256 + w9 + d1_256 + w1;
 
 //////
 	assign block_out_wire = {w2,w3,w4,w5,w6,w7,w10,w11,w12,w13,w14,w15,w_i};
-	
+
 endmodule
