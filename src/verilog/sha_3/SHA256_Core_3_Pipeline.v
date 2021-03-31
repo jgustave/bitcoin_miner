@@ -10,11 +10,12 @@ module sha256_3_pipeline(
 						input 	wire 			CLK,
 						input	wire			RST,
 						input	wire			write_en,
-						input	wire	[255:0]	digest_in,
-						input	wire	[255:0] block_in,
+						input	wire	[255:0] block_in, //output from SHA- stage 2.
 						output	wire	[255:0]	digest_out,
 						output  wire            valid_out
 );
+    parameter [255:0] sha_mc_constants = 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
+
 	// Block_wires
 	wire [255:0] block_loop_1;
 	wire [255:0] block_loop_2;
@@ -72,13 +73,13 @@ module sha256_3_pipeline(
 	wire [511:0] block_loop_54;
 	wire [511:0] block_loop_55;
 	wire [511:0] block_loop_56;
-	wire [511:0] block_loop_57; //TODO: Somewhere around here We should start shrinking the datapath.
-	wire [511:0] block_loop_58;
-	wire [511:0] block_loop_59;
-	wire [511:0] block_loop_60;
-	wire [511:0] block_loop_61;
-	wire [511:0] block_loop_62;
-	wire [511:0] block_loop_63;
+	wire [479:0] block_loop_57;
+	wire [415:0] block_loop_58;
+	wire [351:0] block_loop_59;
+	wire [287:0] block_loop_60;
+	wire [223:0] block_loop_61;
+	wire [159:0] block_loop_62;
+	wire [31:0]  block_loop_63;
 
 	// Digest_wires
 	wire [255:0] digest_loop_0;
@@ -522,7 +523,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_30),
 		.block_out(block_loop_31)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins32_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins32_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -530,7 +531,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_31),
 		.block_out(block_loop_32)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins33_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins33_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -538,7 +539,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_32),
 		.block_out(block_loop_33)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins34_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins34_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -546,7 +547,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_33),
 		.block_out(block_loop_34)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins35_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins35_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -554,7 +555,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_34),
 		.block_out(block_loop_35)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins36_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins36_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -562,7 +563,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_35),
 		.block_out(block_loop_36)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins37_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins37_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -570,7 +571,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_36),
 		.block_out(block_loop_37)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins38_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins38_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -578,7 +579,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_37),
 		.block_out(block_loop_38)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins39_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins39_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -586,7 +587,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_38),
 		.block_out(block_loop_39)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins40_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins40_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -594,7 +595,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_39),
 		.block_out(block_loop_40)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins41_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins41_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -602,7 +603,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_40),
 		.block_out(block_loop_41)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins42_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins42_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -610,7 +611,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_41),
 		.block_out(block_loop_42)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins43_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins43_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -618,7 +619,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_42),
 		.block_out(block_loop_43)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins44_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins44_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -626,7 +627,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_43),
 		.block_out(block_loop_44)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins45_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins45_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -634,7 +635,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_44),
 		.block_out(block_loop_45)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins46_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins46_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -642,7 +643,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_45),
 		.block_out(block_loop_46)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins47_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins47_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -650,7 +651,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_46),
 		.block_out(block_loop_47)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins48_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins48_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -658,7 +659,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_47),
 		.block_out(block_loop_48)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins49_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins49_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -666,7 +667,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_48),
 		.block_out(block_loop_49)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins50_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins50_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -674,7 +675,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_49),
 		.block_out(block_loop_50)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins51_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins51_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -682,7 +683,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_50),
 		.block_out(block_loop_51)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins52_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins52_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -690,7 +691,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_51),
 		.block_out(block_loop_52)
 	);
-	sha256_w_mem_for_pipeline_32to53_3 ins53_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins53_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -698,7 +699,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_52),
 		.block_out(block_loop_53)
 	);
-	sha256_w_mem_for_pipeline_54_3 ins54_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins54_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -706,7 +707,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_53),
 		.block_out(block_loop_54)
 	);
-	sha256_w_mem_for_pipeline_55_3 ins55_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins55_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -714,7 +715,7 @@ module sha256_3_pipeline(
 		.block_in(block_loop_54),
 		.block_out(block_loop_55)
 	);
-	sha256_w_mem_for_pipeline_56_3 ins56_w_mem(
+	sha256_w_mem_for_pipeline_32to56_3 ins56_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -778,6 +779,8 @@ module sha256_3_pipeline(
 
 
 //	Instance of all main_loops
+
+
 	main_loop_for_pipeline_0to63 ins_main_loop_0(
 		.CLK(CLK),
 		.RST(RST),
@@ -786,7 +789,7 @@ module sha256_3_pipeline(
 		.k_i(k_0),
 
 		.w_i(w_i_loop_0),
-		.digest_in(digest_in),
+		.digest_in(sha_mc_constants), //this should be the SHA-constants for initial state.
 		.digest_out(digest_loop_0)
 	);
 

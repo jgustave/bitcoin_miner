@@ -6,9 +6,7 @@ module sha3_tb();
     reg RST;
     reg write_en;
 
-    reg [255:0]	dii;
-    reg [255:0]	di;
-    reg [127:0] bi;
+    reg [255:0] bi;
 
     wire [255:0] do;
     wire vo;
@@ -21,8 +19,6 @@ module sha3_tb();
     sha256_3_pipeline foo(.CLK(CLK),
                           .RST(RST),
                           .write_en(write_en),
-                          .digest_intial(dii), //TODO: typo
-                          .digest_in(di),
                           .block_in(bi),
                           .digest_out(do),
                           .valid_out(vo) );
@@ -42,13 +38,9 @@ module sha3_tb();
         RST=1;
 
 
-        //Actual result of msg1 Added on to the result at end of stage 63
-        dii=256'hF59007B57A2E5616B8F47922F4A62AA5F6F596588185BBAEFA09E7763BC75771;
-
         //Mid-state. clocked ahead 1
-        di =256'hF7A528B9F59007B57A2E5616B8F47922F2C1816DF6F596588185BBAEFA09E776;
 
-        bi =127'h252db801130dae516461011a3aeb9bb8;
+        bi =256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467;
 
         $display("CNT: At time %t, %d ",$time, foo.counter_reg );
 //        $display("MEa: At time %t, value = %h %h %h %h",$time, foo.block_loop_1, foo.block_loop_2, foo.block_loop_3, foo.block_loop_4 );
@@ -132,15 +124,15 @@ module sha3_tb();
         `assert(foo.counter_reg,64);
         `assert(foo.ins_main_loop_63.digest_out_wire,256'hE60E116DBB0F2D17486456C9776FD9E6E93412D5250EF7B412FB586039701CF6);
 
-        $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
+        //$display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_in, foo.digest_out_reg );
 
         #2
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
-        $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
+        //$display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_in, foo.digest_out_reg );
         $display("status: At time %t, write = %h valid = %h",$time, foo.write_en, foo.valid_out );
         #2
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
-        $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
+        //$display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_in, foo.digest_out_reg );
         $display("status: At time %t, write = %h valid = %h",$time, foo.write_en, foo.valid_out );
 
         `assert(foo.digest_out_reg,256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467);
@@ -150,7 +142,7 @@ module sha3_tb();
         bi =127'h252db801130dae516461011a3aeb9bb9;
         #130
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
-        $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
+        //$display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_in, foo.digest_out_reg );
         `assert(foo.digest_out_reg,256'hB677077F3EC92273F319D7C6217F79FE8A4A977D93E7A4BDF8EF1B0D6C936D6C);
         $finish;
     end
