@@ -10,16 +10,23 @@ module sha256_2_pipeline(
 						input 	wire 			CLK,
 						input	wire			RST,
 						input	wire			write_en,
-						input	wire	[255:0]	digest_intial, //digest_in on phase 1.. //Note gets added to result of MC at end
-						input	wire	[255:0]	digest_in, //Result from phase 1 //Note: This is used to continue input to he MC stage (midState)
-						input	wire	[127:0] block_in, //This appears to be the 4 bytes that we can control in Message part 2
+
+
+						input	wire	[255:0]	digest_intial, //This gets added to result of MC at end. This is the normal SHA256 result of previous run.
+						input	wire	[255:0]	digest_in, //This is used to continue input to he MC stage (midState) It is clocked ahead.
+
+						input	wire	[127:0] block_in, //This is 4 ints that we can control in Message part 2
 						output	wire	[255:0]	digest_out,
 						output  wire            valid_out
 );
-	// Block_wires
-
-    //These wires are inputs between message expander stages
+    //These wires are inputs between message expander stages.. These contain the data that each expander stage needs
+    //to calculate the input the the MC, the result of each ME stage is stored in w_X (via an assign statement below)
     //They have varying sizes because we don't need to forward all the data
+    //wire [127:0] block_loop_0; not needed.
+    wire [127:0] block_loop_1;
+    wire [127:0] block_loop_2;
+    wire [127:0] block_loop_3;
+    wire [127:0] block_loop_4;
 	wire [127:0] block_loop_5;
 	wire [127:0] block_loop_6;
 	wire [127:0] block_loop_7;
@@ -78,10 +85,15 @@ module sha256_2_pipeline(
 	wire [287:0] block_loop_60;
 	wire [223:0] block_loop_61;
 	wire [159:0] block_loop_62;
-	wire [31:0] block_loop_63;
+	wire [31:0]  block_loop_63;
 
 	// Digest_wires
 
+    //Digest 0 is pre-calculated and passed in
+    //wire [255:0] digest_loop_0;
+    wire [255:0] digest_loop_1;
+    wire [255:0] digest_loop_2;
+    wire [255:0] digest_loop_3;
 	wire [255:0] digest_loop_4;
 	wire [255:0] digest_loop_5;
 	wire [255:0] digest_loop_6;
@@ -145,7 +157,8 @@ module sha256_2_pipeline(
 
 	// wi
 
-    //Known values of w since they are constant. (JD)This is correct.. First 4 bytes we control.
+
+    //Known values of w since they are constant.
 	parameter [31:0] w_i_loop_4 = 32'h80000000;
 	parameter [31:0] w_i_loop_5 = 32'h0;
 	parameter [31:0] w_i_loop_6 = 32'h0;
@@ -161,6 +174,11 @@ module sha256_2_pipeline(
 
 //Message Expander outputs that are input in the the Message Compressor.
 //Each stage of MC only uses 32bits from the ME work
+//First 16 are just copies of the input.
+    //wire [31:0] w_i_loop_0; not used (Stage 0 is pre calculated in software since it repeats)
+    wire [31:0] w_i_loop_1; //timestamp
+    wire [31:0] w_i_loop_2; //target(difficulty)
+    wire [31:0] w_i_loop_3; //nonce
 	wire [31:0] w_i_loop_16;
 	wire [31:0] w_i_loop_17;
 	wire [31:0] w_i_loop_18;
@@ -210,80 +228,109 @@ module sha256_2_pipeline(
 	wire [31:0] w_i_loop_62;
 	wire [31:0] w_i_loop_63;
 
-	//reg
-
-	reg [255:0] 	digest_out_reg;
-	reg  		valid_out_reg;
-	reg [6:0] counter_reg;
-	//k
-
-				parameter [31:0] k_4 = 32'h3956c25b;
-				parameter [31:0] k_5 = 32'h59f111f1;
-				parameter [31:0] k_6 = 32'h923f82a4;
-				parameter [31:0] k_7 = 32'hab1c5ed5;
-				parameter [31:0] k_8 = 32'hd807aa98;
-				parameter [31:0] k_9 = 32'h12835b01;
-				parameter [31:0] k_10 = 32'h243185be;
-				parameter [31:0] k_11 = 32'h550c7dc3;
-				parameter [31:0] k_12 = 32'h72be5d74;
-				parameter [31:0] k_13 = 32'h80deb1fe;
-				parameter [31:0] k_14 = 32'h9bdc06a7;
-				parameter [31:0] k_15 = 32'hc19bf174;
-				parameter [31:0] k_16 = 32'he49b69c1;
-				parameter [31:0] k_17 = 32'hefbe4786;
-				parameter [31:0] k_18 = 32'h0fc19dc6;
-				parameter [31:0] k_19 = 32'h240ca1cc;
-				parameter [31:0] k_20 = 32'h2de92c6f;
-				parameter [31:0] k_21 = 32'h4a7484aa;
-				parameter [31:0] k_22 = 32'h5cb0a9dc;
-				parameter [31:0] k_23 = 32'h76f988da;
-				parameter [31:0] k_24 = 32'h983e5152;
-				parameter [31:0] k_25 = 32'ha831c66d;
-				parameter [31:0] k_26 = 32'hb00327c8;
-				parameter [31:0] k_27 = 32'hbf597fc7;
-				parameter [31:0] k_28 = 32'hc6e00bf3;
-				parameter [31:0] k_29 = 32'hd5a79147;
-				parameter [31:0] k_30 = 32'h06ca6351;
-				parameter [31:0] k_31 = 32'h14292967;
-				parameter [31:0] k_32 = 32'h27b70a85;
-				parameter [31:0] k_33 = 32'h2e1b2138;
-				parameter [31:0] k_34 = 32'h4d2c6dfc;
-				parameter [31:0] k_35 = 32'h53380d13;
-				parameter [31:0] k_36 = 32'h650a7354;
-				parameter [31:0] k_37 = 32'h766a0abb;
-				parameter [31:0] k_38 = 32'h81c2c92e;
-				parameter [31:0] k_39 = 32'h92722c85;
-				parameter [31:0] k_40 = 32'ha2bfe8a1;
-				parameter [31:0] k_41 = 32'ha81a664b;
-				parameter [31:0] k_42 = 32'hc24b8b70;
-				parameter [31:0] k_43 = 32'hc76c51a3;
-				parameter [31:0] k_44 = 32'hd192e819;
-				parameter [31:0] k_45 = 32'hd6990624;
-				parameter [31:0] k_46 = 32'hf40e3585;
-				parameter [31:0] k_47 = 32'h106aa070;
-				parameter [31:0] k_48 = 32'h19a4c116;
-				parameter [31:0] k_49 = 32'h1e376c08;
-				parameter [31:0] k_50 = 32'h2748774c;
-				parameter [31:0] k_51 = 32'h34b0bcb5;
-				parameter [31:0] k_52 = 32'h391c0cb3;
-				parameter [31:0] k_53 = 32'h4ed8aa4a;
-				parameter [31:0] k_54 = 32'h5b9cca4f;
-				parameter [31:0] k_55 = 32'h682e6ff3;
-				parameter [31:0] k_56 = 32'h748f82ee;
-				parameter [31:0] k_57 = 32'h78a5636f;
-				parameter [31:0] k_58 = 32'h84c87814;
-				parameter [31:0] k_59 = 32'h8cc70208;
-				parameter [31:0] k_60 = 32'h90befffa;
-				parameter [31:0] k_61 = 32'ha4506ceb;
-				parameter [31:0] k_62 = 32'hbef9a3f7;
-				parameter [31:0] k_63 = 32'hc67178f2;
 
 
-	mem_save_block_128 ins5_w_mem(
+    //These are per SHA spec
+    //k_0 not needed since we pre-calc
+    //parameter [31:0] k_0 = 32'h428a2f98; //Not needed.
+    parameter [31:0] k_1 = 32'h71374491;
+    parameter [31:0] k_2 = 32'hb5c0fbcf;
+    parameter [31:0] k_3 = 32'he9b5dba5;
+    parameter [31:0] k_4 = 32'h3956c25b;
+    parameter [31:0] k_5 = 32'h59f111f1;
+    parameter [31:0] k_6 = 32'h923f82a4;
+    parameter [31:0] k_7 = 32'hab1c5ed5;
+    parameter [31:0] k_8 = 32'hd807aa98;
+    parameter [31:0] k_9 = 32'h12835b01;
+    parameter [31:0] k_10 = 32'h243185be;
+    parameter [31:0] k_11 = 32'h550c7dc3;
+    parameter [31:0] k_12 = 32'h72be5d74;
+    parameter [31:0] k_13 = 32'h80deb1fe;
+    parameter [31:0] k_14 = 32'h9bdc06a7;
+    parameter [31:0] k_15 = 32'hc19bf174;
+    parameter [31:0] k_16 = 32'he49b69c1;
+    parameter [31:0] k_17 = 32'hefbe4786;
+    parameter [31:0] k_18 = 32'h0fc19dc6;
+    parameter [31:0] k_19 = 32'h240ca1cc;
+    parameter [31:0] k_20 = 32'h2de92c6f;
+    parameter [31:0] k_21 = 32'h4a7484aa;
+    parameter [31:0] k_22 = 32'h5cb0a9dc;
+    parameter [31:0] k_23 = 32'h76f988da;
+    parameter [31:0] k_24 = 32'h983e5152;
+    parameter [31:0] k_25 = 32'ha831c66d;
+    parameter [31:0] k_26 = 32'hb00327c8;
+    parameter [31:0] k_27 = 32'hbf597fc7;
+    parameter [31:0] k_28 = 32'hc6e00bf3;
+    parameter [31:0] k_29 = 32'hd5a79147;
+    parameter [31:0] k_30 = 32'h06ca6351;
+    parameter [31:0] k_31 = 32'h14292967;
+    parameter [31:0] k_32 = 32'h27b70a85;
+    parameter [31:0] k_33 = 32'h2e1b2138;
+    parameter [31:0] k_34 = 32'h4d2c6dfc;
+    parameter [31:0] k_35 = 32'h53380d13;
+    parameter [31:0] k_36 = 32'h650a7354;
+    parameter [31:0] k_37 = 32'h766a0abb;
+    parameter [31:0] k_38 = 32'h81c2c92e;
+    parameter [31:0] k_39 = 32'h92722c85;
+    parameter [31:0] k_40 = 32'ha2bfe8a1;
+    parameter [31:0] k_41 = 32'ha81a664b;
+    parameter [31:0] k_42 = 32'hc24b8b70;
+    parameter [31:0] k_43 = 32'hc76c51a3;
+    parameter [31:0] k_44 = 32'hd192e819;
+    parameter [31:0] k_45 = 32'hd6990624;
+    parameter [31:0] k_46 = 32'hf40e3585;
+    parameter [31:0] k_47 = 32'h106aa070;
+    parameter [31:0] k_48 = 32'h19a4c116;
+    parameter [31:0] k_49 = 32'h1e376c08;
+    parameter [31:0] k_50 = 32'h2748774c;
+    parameter [31:0] k_51 = 32'h34b0bcb5;
+    parameter [31:0] k_52 = 32'h391c0cb3;
+    parameter [31:0] k_53 = 32'h4ed8aa4a;
+    parameter [31:0] k_54 = 32'h5b9cca4f;
+    parameter [31:0] k_55 = 32'h682e6ff3;
+    parameter [31:0] k_56 = 32'h748f82ee;
+    parameter [31:0] k_57 = 32'h78a5636f;
+    parameter [31:0] k_58 = 32'h84c87814;
+    parameter [31:0] k_59 = 32'h8cc70208;
+    parameter [31:0] k_60 = 32'h90befffa;
+    parameter [31:0] k_61 = 32'ha4506ceb;
+    parameter [31:0] k_62 = 32'hbef9a3f7;
+    parameter [31:0] k_63 = 32'hc67178f2;
+
+
+	mem_save_block_128 ins1_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
 		.block_in(block_in),
+		.block_out(block_loop_1)
+	);
+	mem_save_block_128 ins2_w_mem(
+		.CLK(CLK),
+		.RST(RST),
+		.write_en(write_en),
+		.block_in(block_loop_1),
+		.block_out(block_loop_2)
+	);
+	mem_save_block_128 ins3_w_mem(
+		.CLK(CLK),
+		.RST(RST),
+		.write_en(write_en),
+		.block_in(block_loop_2),
+		.block_out(block_loop_3)
+	);
+	mem_save_block_128 ins4_w_mem(
+		.CLK(CLK),
+		.RST(RST),
+		.write_en(write_en),
+		.block_in(block_loop_3),
+		.block_out(block_loop_4)
+	);
+	mem_save_block_128 ins5_w_mem(
+		.CLK(CLK),
+		.RST(RST),
+		.write_en(write_en),
+		.block_in(block_loop_4),
 		.block_out(block_loop_5)
 	);
 	mem_save_block_128 ins6_w_mem(
@@ -743,20 +790,19 @@ module sha256_2_pipeline(
 
 //////////////////////////////////////////////////////////////////////////
 //	Instance of all main_loops
-//TODO: why do we skip first 4 stages (I think its because the known inputs)
+//We skip the first stage since we pre-calc it and its constant
 /*	main_loop_for_pipeline_0to63 ins_main_loop_0(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
-
 		.k_i(k_0),
-
 		.w_i(w_i_loop_0),
-		.digest_in(digest_in), //Note: Not sure...
+		.digest_in(digest_in),
 		.digest_out(digest_loop_0)
 	);
+*/
 
-	main_loop_for_pipeline_0to63 ins_main_loop_1(
+	main_loop_for_pipeline_4to63 ins_main_loop_1(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -764,10 +810,10 @@ module sha256_2_pipeline(
 		.k_i(k_1),
 
 		.w_i(w_i_loop_1),
-		.digest_in(digest_loop_0),
+		.digest_in(digest_in), //initial state, which is the usual initial state(abcdefgh) but clocked ahead 1 in the 2 message set.
 		.digest_out(digest_loop_1)
 	);
-	main_loop_for_pipeline_0to63 ins_main_loop_2(
+	main_loop_for_pipeline_4to63 ins_main_loop_2(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -778,7 +824,7 @@ module sha256_2_pipeline(
 		.digest_in(digest_loop_1),
 		.digest_out(digest_loop_2)
 	);
-	main_loop_for_pipeline_0to63 ins_main_loop_3(
+	main_loop_for_pipeline_4to63 ins_main_loop_3(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
@@ -788,9 +834,7 @@ module sha256_2_pipeline(
 		.w_i(w_i_loop_3),
 		.digest_in(digest_loop_2),
 		.digest_out(digest_loop_3)
-	);*/
-
-
+	);
 	main_loop_for_pipeline_4to63 ins_main_loop_4(
 		.CLK(CLK),
 		.RST(RST),
@@ -799,7 +843,7 @@ module sha256_2_pipeline(
 		.k_i(k_4),
 
 		.w_i(w_i_loop_4),
-		.digest_in(digest_in), //Note digest_in .. what is this? How are we skipping 4?
+		.digest_in(digest_loop_3),
 		.digest_out(digest_loop_4)
 	);
 	main_loop_for_pipeline_4to63 ins_main_loop_5(
@@ -1450,12 +1494,15 @@ module sha256_2_pipeline(
 		.digest_out(digest_loop_63)
 	);
 
-	///////
 
-//Wiring up the inputs to MC.
-//Pick specific outputs from MC to input to ME.
 
-//TODO; Why do we skip first 16 stages?
+//Note: we skip the first 16 because.. they are just the inputs? not sure.
+
+    //assign w_i_loop_0 =  block_loop_1[127:96];
+    assign w_i_loop_1 =  block_loop_2[95:64];
+    assign w_i_loop_2 =  block_loop_3[63:32];
+    assign w_i_loop_3 =  block_loop_3[31:0];
+
 	/*assign w_i_loop_0 =  block_in[511:480];
 	assign w_i_loop_1 =  block_loop_1[479:448];
 	assign w_i_loop_2 =  block_loop_2[447:416];
@@ -1523,6 +1570,14 @@ module sha256_2_pipeline(
 	assign w_i_loop_63 =  block_loop_63[31:0];
 
 
+	reg [255:0] digest_out_reg;
+	reg  		valid_out_reg;
+	reg [6:0]   counter_reg;
+
+	assign digest_out = digest_out_reg;
+	assign valid_out  = valid_out_reg;
+
+
 	///////
 	always @(posedge CLK or negedge RST)
 	begin
@@ -1559,7 +1614,7 @@ module sha256_2_pipeline(
             end
 		end
 	end
-	assign digest_out = digest_out_reg;
-	assign valid_out = valid_out_reg;
+
+
 
 endmodule

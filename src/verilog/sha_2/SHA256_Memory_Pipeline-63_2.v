@@ -37,14 +37,14 @@ module sha256_w_mem_for_pipeline_63_2(
 	wire 	[31:0]  w2;
 	wire 	[31:0]  w3;
 	wire 	[31:0]  w4;
-	wire 	[31:0]  w5;
+	//wire 	[31:0]  w5;
 
 
 	assign w1 = block_in[159:128];
 	assign w2 = block_in[127:96];
 	assign w3 = block_in[95:64];
 	assign w4 = block_in[63:32];
-	assign w5 = block_in[31:0];
+	//assign w5 = block_in[31:0];
 
 
 	//TODO: block_in 0-31 unloaded

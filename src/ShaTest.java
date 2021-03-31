@@ -1,6 +1,4 @@
 import javax.xml.bind.DatatypeConverter;
-import java.security.MessageDigest;
-import java.security.Provider;
 import java.util.Random;
 
 /**
@@ -79,27 +77,35 @@ public class ShaTest {
 
         String version = "02000000"; //v2
         String hashPrevBlock = "0affed3fc96851d8c74391c2d9333168fe62165eb228bced7e00000000000000";
-        String merkleRoot = "4277b65e3bd527f0ceb5298bdb06b4aacbae8a4a808c2c8aa414c20f252db801";
+        //String merkleRoot = "4277b65e3bd527f0ceb5298bdb06b4aacbae8a4a808c2c8aa414c20f252db801";
         String merkleRoot_a = "4277b65e3bd527f0ceb5298bdb06b4aacbae8a4a808c2c8aa414c20f";
         String merkleRoot_b = "252db801";
         String time = "130dae51";
         String difficulty = "6461011a";
         String successNonce = "3aeb9bb8"; //3097226042
+        //String successNonce = "FFFFFFFF"; //3097226042
         String padding = "80000000" + "0000000000" + "0000000000"+ "0000000000" + "0000000000" + "0000000000" + "0000000000"+ "0000000000" + "0000000000" + "00000280";
         String padding2 = "80000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000000" + "00000100";
         String hashResult = "5c8ad782c007cc563f8db735180b35dab8c983d172b57e2c2701000000000000"; //This is the resulting successfull hash.
-
+                           //56B0919E1CEBA1E0DD80423C21603BCF8E2E48DCD5619AD1581FA3980AEF5938
+                           //3C50DFD306CF40ACFC9096F83EBB3A8DD561564BAA4CF0777C68C9B968A677DF
 
         byte[] msg1 = DatatypeConverter.parseHexBinary(version + hashPrevBlock + merkleRoot_a );
         byte[] msg2 = DatatypeConverter.parseHexBinary(merkleRoot_b + time + difficulty + successNonce + padding );
 
 
-        https://github.com/aseemgautam/bitcoin-sha256
+        //https://github.com/aseemgautam/bitcoin-sha256
+
 
         try {
             ShaHack digest = new ShaHack();
+
             byte[] out1 = digest.digest(msg1);
+
+            System.out.println("##");
+
             byte[] out2 = digest.digest(msg2);
+            System.out.println("####");
 
             String out2AsHex = DatatypeConverter.printHexBinary(out2);
             String msg3Str = out2AsHex + padding2;
@@ -107,6 +113,7 @@ public class ShaTest {
 
             digest.implReset();
             byte[] out3 = digest.digest(msg3);
+
 
             System.out.println("#############################");
             System.out.println( DatatypeConverter.printHexBinary(out1) );
@@ -117,6 +124,9 @@ public class ShaTest {
                 throw new RuntimeException("didn't verify");
             }
 
+            //pre: 0xF7A528B9 0xF59007B5 0x7A2E5616 0xB8F47922 0xF2C1816D 0xF6F59658 0x8185BBAE 0xFA09E776
+
+            //+1: 0x10F2957C 0xF7A528B9 0xF59007B5 0x7A2E5616 0x25BEF710 0xF2C1816D 0xF6F59658 0x8185BBAE
         }catch(Exception e) {
             e.printStackTrace();
         }

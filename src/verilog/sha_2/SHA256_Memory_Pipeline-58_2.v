@@ -36,7 +36,7 @@ module sha256_w_mem_for_pipeline_58_2(
 	wire 	[31:0]  w5;
 	wire 	[31:0]  w6;
 	wire 	[31:0]  w7;
-	wire 	[31:0]  w8;
+	//wire 	[31:0]  w8;
 	wire 	[31:0]  w9;
 	wire 	[31:0]  w10;
 	wire 	[31:0]  w11;
@@ -53,7 +53,7 @@ module sha256_w_mem_for_pipeline_58_2(
 	assign w5 = block_in[351:320];
 	assign w6 = block_in[319:288];
 	assign w7 = block_in[287:256];
-	assign w8 = block_in[255:224];
+	//assign w8 = block_in[255:224];
 	assign w9 = block_in[223:192];
 	assign w10 = block_in[191:160];
 	assign w11 = block_in[159:128];

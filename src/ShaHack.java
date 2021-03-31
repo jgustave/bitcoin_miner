@@ -150,9 +150,7 @@ public class ShaHack {
     * Process the current block to update the state variable state.
     */
     void implCompress(byte[] buf) {
-        //Copy first 16*4 bytes to W
 
-        //w[0] = reverseBytes(unsafe.getInt(in, (long)(inOfs     )));
 
         for( int x=0;x<16;x++)  {
             ByteBuffer wrapped = ByteBuffer.wrap(buf,x*4,4);
@@ -162,10 +160,9 @@ public class ShaHack {
        // The first 16 ints are from the byte stream, compute the rest of
        // the W[]'s
        for (int t = 16; t < ITERATION; t++) {
-           W[t] = lf_delta1(W[t-2]) + W[t-7] + lf_delta0(W[t-15])
-                  + W[t-16];
+           W[t] = lf_delta1(W[t-2]) + W[t-7] + lf_delta0(W[t-15])  + W[t-16];
        }
-//f101a256 8c20298a db8592dc 5dc2db56
+
        int a = state[0];
        int b = state[1];
        int c = state[2];
@@ -175,9 +172,13 @@ public class ShaHack {
        int g = state[6];
        int h = state[7];
 
+        System.out.println("Pre:" + dumpFoo(a,b,c,d,e,f,g,h));
+
        for (int i = 0; i < ITERATION; i++) {
+
            int T1 = h + lf_sigma1(e) + lf_ch(e,f,g) + ROUND_CONSTS[i] + W[i];
            int T2 = lf_sigma0(a) + lf_maj(a,b,c);
+
            h = g;
            g = f;
            f = e;
@@ -188,18 +189,7 @@ public class ShaHack {
            a = T1 + T2;
 
 
-           byte[] debugBuf = new byte[32];
-           ByteBuffer wrapped = ByteBuffer.wrap(debugBuf);
-           wrapped.putInt(0,a);
-           wrapped.putInt(4,b);
-           wrapped.putInt(8,c);
-           wrapped.putInt(12,d);
-           wrapped.putInt(16,e);
-           wrapped.putInt(20,f);
-           wrapped.putInt(24,g);
-           wrapped.putInt(28,h);
-           String hexdump = DatatypeConverter.printHexBinary(debugBuf) ;
-           System.out.println(hexdump);
+           System.out.println(String.format("0x%08X", W[i]) + "  :" + dumpFoo(a,b,c,d,e,f,g,h));
        }
        state[0] += a;
        state[1] += b;
@@ -209,5 +199,39 @@ public class ShaHack {
        state[5] += f;
        state[6] += g;
        state[7] += h;
+    }
+
+    public void setState (byte[] midState) {
+        for( int x=0;x<8;x++)  {
+            ByteBuffer wrapped = ByteBuffer.wrap(midState);
+            state[x] = wrapped.getInt(x*4);
+        }
+    }
+    public void dump() {
+
+        String result = "";
+        for (int i : W) {
+            result += (i + " ");
+        }
+        System.out.println(result);
+        result = "";
+        for (int i : state) {
+            result += (i + " ");
+        }
+        System.out.println(result);
+    }
+    public static String dumpFoo(int a, int b, int c, int d, int e, int f, int g, int h) {
+        byte[] debugBuf = new byte[32];
+        ByteBuffer wrapped = ByteBuffer.wrap(debugBuf);
+        wrapped.putInt(0,a);
+        wrapped.putInt(4,b);
+        wrapped.putInt(8,c);
+        wrapped.putInt(12,d);
+        wrapped.putInt(16,e);
+        wrapped.putInt(20,f);
+        wrapped.putInt(24,g);
+        wrapped.putInt(28,h);
+        String hexdump = DatatypeConverter.printHexBinary(debugBuf) ;
+        return( hexdump );
     }
 }
