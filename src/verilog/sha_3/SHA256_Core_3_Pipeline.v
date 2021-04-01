@@ -1558,10 +1558,18 @@ module sha256_3_pipeline(
 			counter_reg <= 6'b0;
 		end
 		else begin
-			if(write_en == 1'b1 & counter_reg==64) begin
+			if(write_en == 1'b1 & counter_reg==65) begin
                 valid_out_reg <=1'b1;
                 counter_reg <= counter_reg;
                 digest_out_reg <= digest_loop_63;
+                digest_out_reg[255:224] <=  32'h6a09e667 + digest_loop_63[255:224];
+                digest_out_reg[223:192] <= 32'hbb67ae85 + digest_loop_63[223:192];
+                digest_out_reg[191:160] <= 32'h3c6ef372 + digest_loop_63[191:160];
+                digest_out_reg[159:128] <= 32'ha54ff53a + digest_loop_63[159:128];
+                digest_out_reg[127:96] <= 32'h510e527f + digest_loop_63[127:96];
+                digest_out_reg[95:64] <= 32'h9b05688c + digest_loop_63[95:64];
+                digest_out_reg[63:32] <= 32'h1f83d9ab + digest_loop_63[63:32];
+                digest_out_reg[31:0] <= 32'h5be0cd19 + digest_loop_63[31:0];
 			end
 			else if(write_en == 1'b1) begin
 				counter_reg <= counter_reg + 1;

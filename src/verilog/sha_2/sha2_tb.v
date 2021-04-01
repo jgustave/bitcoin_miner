@@ -123,7 +123,6 @@ module sha2_tb();
 
         #16
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
-        $display("MCo: At time %t, value = %h %h %h",$time, foo.ins_main_loop_11.digest_out_wire, foo.ins_main_loop_12.digest_out_wire, foo.ins_main_loop_13.digest_out_wire );
         #2
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         #2
