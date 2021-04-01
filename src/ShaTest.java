@@ -92,6 +92,10 @@ public class ShaTest {
 
         byte[] msg1 = DatatypeConverter.parseHexBinary(version + hashPrevBlock + merkleRoot_a );
         byte[] msg2 = DatatypeConverter.parseHexBinary(merkleRoot_b + time + difficulty + successNonce + padding );
+        //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801111111112222222233333333" + padding );
+        //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801444444445555555566666666" + padding );
+        //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801202020203030303040404040" + padding );
+
 
 
         //https://github.com/aseemgautam/bitcoin-sha256

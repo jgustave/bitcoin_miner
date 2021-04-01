@@ -17,6 +17,7 @@ module sha256_3_pipeline(
     parameter [255:0] sha_mc_constants = 256'h6a09e667bb67ae853c6ef372a54ff53a510e527f9b05688c1f83d9ab5be0cd19;
 
 	// Block_wires
+	wire [255:0] block_loop_0;
 	wire [255:0] block_loop_1;
 	wire [255:0] block_loop_2;
 	wire [255:0] block_loop_3;
@@ -290,11 +291,18 @@ module sha256_3_pipeline(
     parameter [31:0] k_63 = 32'hc67178f2;
 
 
-	mem_save_block_256 ins1_w_mem(
+	mem_save_block_256 ins0_w_mem(
 		.CLK(CLK),
 		.RST(RST),
 		.write_en(write_en),
 		.block_in(block_in),
+		.block_out(block_loop_0)
+	);
+	mem_save_block_256 ins1_w_mem(
+		.CLK(CLK),
+		.RST(RST),
+		.write_en(write_en),
+		.block_in(block_loop_0),
 		.block_out(block_loop_1)
 	);
 	mem_save_block_256 ins2_w_mem(
@@ -1479,16 +1487,17 @@ module sha256_3_pipeline(
 	///////
 
 
-	assign w_i_loop_0 =  block_loop_8[255:224];
-	assign w_i_loop_1 =  block_loop_9[223:192];
-	assign w_i_loop_2 =  block_loop_10[191:160];
-	assign w_i_loop_3 =  block_loop_11[159:128];
-	assign w_i_loop_4 =  block_loop_12[127:96];
-	assign w_i_loop_5 =  block_loop_13[95:64];
-	assign w_i_loop_6 =  block_loop_14[63:32];
-	assign w_i_loop_7 =  block_loop_15[31:0];
+    //first w_i should be the input (digest from previous stage)
+	assign w_i_loop_0 =  block_loop_0[255:224];
+	assign w_i_loop_1 =  block_loop_1[223:192];
+	assign w_i_loop_2 =  block_loop_2[191:160];
+	assign w_i_loop_3 =  block_loop_3[159:128];
+	assign w_i_loop_4 =  block_loop_4[127:96];
+	assign w_i_loop_5 =  block_loop_5[95:64];
+	assign w_i_loop_6 =  block_loop_6[63:32];
+	assign w_i_loop_7 =  block_loop_7[31:0];
 
-
+//Then 8 constants
 
 	assign w_i_loop_16 =  block_loop_16[31:0];
 	assign w_i_loop_17 =  block_loop_17[31:0];

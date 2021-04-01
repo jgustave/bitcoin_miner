@@ -1496,29 +1496,12 @@ module sha256_2_pipeline(
 
 
 
-//Note: we skip the first 16 because.. they are just the inputs? not sure.
-
-    //assign w_i_loop_0 =  block_loop_1[127:96];
-    assign w_i_loop_1 =  block_loop_2[95:64];
-    assign w_i_loop_2 =  block_loop_3[63:32];
+    //assign w_i_loop_0 =  block_loop_1[127:96]; //Stays the same while we run and pre-calced in previous stage.
+    assign w_i_loop_1 =  block_loop_1[95:64];
+    assign w_i_loop_2 =  block_loop_2[63:32];
     assign w_i_loop_3 =  block_loop_3[31:0];
 
-	/*assign w_i_loop_0 =  block_in[511:480];
-	assign w_i_loop_1 =  block_loop_1[479:448];
-	assign w_i_loop_2 =  block_loop_2[447:416];
-	assign w_i_loop_3 =  block_loop_3[415:384];
-	assign w_i_loop_4 =   block_in[383:352];
-	assign w_i_loop_5 =  block_loop_5[351:320];
-	assign w_i_loop_6 =  block_loop_6[319:288];
-	assign w_i_loop_7 =  block_loop_7[287:256];
-	assign w_i_loop_8 =  block_loop_8[255:224];
-	assign w_i_loop_9 =  block_loop_9[223:192];
-	assign w_i_loop_10 =  block_loop_10[191:160];
-	assign w_i_loop_11 =  block_loop_11[159:128];
-	assign w_i_loop_12 =  block_loop_12[127:96];
-	assign w_i_loop_13 =  block_loop_13[95:64];
-	assign w_i_loop_14 =  block_loop_14[63:32];
-	assign w_i_loop_15 =  block_loop_15[31:0];*/
+    //4-15 are known constants.
 
 	assign w_i_loop_16 =  block_loop_16[31:0];
 	assign w_i_loop_17 =  block_loop_17[31:0];
@@ -1587,7 +1570,7 @@ module sha256_2_pipeline(
 			counter_reg <= 6'b0; //TODO: odd how do we get to 65 in 6 bits?
 		end
 		else begin
-			if(write_en == 1'b1 & counter_reg==65) begin
+			if(write_en == 1'b1 & counter_reg==64) begin
                 valid_out_reg <=1'b1;
                 counter_reg <= counter_reg;
                 //Last step of MC is to add results of 64 rounds to previous result
