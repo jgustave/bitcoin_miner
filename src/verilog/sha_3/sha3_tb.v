@@ -43,6 +43,7 @@ module sha3_tb();
 
         bi =256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467;
 
+
         //Clk 0
         $display("CNT: At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -50,7 +51,7 @@ module sha3_tb();
 
         #2
         //CLK 1
-        //bi =127'h252db801111111112222222233333333; //simulate a new input on the next clock
+        bi =256'h1111111122222222333333334444444455555555666666667777777788888888;
 
         $display("CNT: At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -60,7 +61,7 @@ module sha3_tb();
 
         #2
         //CLK 2
-        //bi =127'h252db801444444445555555566666666; //simulate a new input on the next clock
+        bi =256'h99999999AAAAAAAABBBBBBBBCCCCCCCCDDDDDDDDEEEEEEEEFFFFFFFF01010101;
 
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -72,7 +73,7 @@ module sha3_tb();
 
         #2
         //CLK 3
-        //bi =127'h252db801777777778888888899999999; //new input just for fun.
+        bi =256'h1A1A1A1A2A2A2A2A3A3A3A3A4A4A4A4A5A5A5A5A6A6A6A6A7A7A7A7A8A8A8A8A;
 
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -85,7 +86,7 @@ module sha3_tb();
 
         #2
         //CLK 4
-        //bi =127'h252db801AAAAAAAABBBBBBBBCCCCCCCC; //new input just for fun.
+        bi =256'h1B1B1B1B2B2B2B2B3B3B3B3B4B4B4B4B5B5B5B5B6B6B6B6B7B7B7B7B8B8B8B8B;
 
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -99,7 +100,7 @@ module sha3_tb();
 
         #2
         //CLK 5
-        //bi =127'h252db801DDDDDDDDEEEEEEEEFFFFFFFF; //new input just for fun.
+        bi =256'h1C1C1C1C2C2C2C2C3C3C3C3C4C4C4C4C5C5C5C5C6C6C6C6C7C7C7C7C8C8C8C8C;
 
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
@@ -107,28 +108,28 @@ module sha3_tb();
 
         #2
         //CLK 6
-        //bi =127'h252db801202020203030303040404040; //new input just for fun.
+        bi =256'h1D1D1B1D2D2D2D2D3D3D3D3D4D4D4D4D5D5D5D5D6D6D6D6D7D7D7D7D8D8D8D8D;
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
         $display("MC5: At time %t, value = %h %h %h",$time, foo.ins_main_loop_5.digest_in, foo.ins_main_loop_5.w_i, foo.ins_main_loop_5.digest_out_wire );
 
         #2
         //CLK 7
-        //bi =127'h252db801202020203030303040404040; //new input just for fun.
+        bi =256'h1E1E1E1E2E2E2E2E3E3E3E3E4E4E4E4E5E5E5E5E6E6E6E6E7E7E7E7E8E8E8E8E;
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
         $display("MC6: At time %t, value = %h %h %h",$time, foo.ins_main_loop_6.digest_in, foo.ins_main_loop_6.w_i, foo.ins_main_loop_6.digest_out_wire );
 
         #2
         //CLK 8
-        //bi =127'h252db801202020203030303040404040; //new input just for fun.
+        bi =256'h1F1F1F1F2F2F2F2F3F3F3F3F4F4F4F4F5F5F5F5F6F6F6F6F7F7F7F7F8F8F8F8F;
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
         $display("MC7: At time %t, value = %h %h %h",$time, foo.ins_main_loop_7.digest_in, foo.ins_main_loop_7.w_i, foo.ins_main_loop_7.digest_out_wire );
 
         #2
         //CLK 9
-        //bi =127'h252db801202020203030303040404040; //new input just for fun.
+        //bi =256'h1B1B1B1B2B2B2B2B3B3B3B3B4B4B4B4B5B5B5B5B6B6B6B6B7B7B7B7B8B8B8B8B;
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("W0-9: At time %t, value = %h %h %h %h %h %h %h %h %h %h",$time, foo.ins_main_loop_0.w_i, foo.ins_main_loop_1.w_i, foo.ins_main_loop_2.w_i, foo.ins_main_loop_3.w_i, foo.ins_main_loop_4.w_i, foo.ins_main_loop_5.w_i, foo.ins_main_loop_6.w_i, foo.ins_main_loop_7.w_i, foo.ins_main_loop_8.w_i, foo.ins_main_loop_9.w_i );
         $display("MC8: At time %t, value = %h %h %h",$time, foo.ins_main_loop_8.digest_in, foo.ins_main_loop_8.w_i, foo.ins_main_loop_8.digest_out_wire );
@@ -201,14 +202,17 @@ module sha3_tb();
         #2
         //CLK 66
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
+        `assert(foo.digest_out,256'h1FB5FEB01B25BB7D54AF7767938152C7610485FCE20CA8C9D83A055ABB4BDF2E);
 
         #2
         //CLK 67
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
+        `assert(foo.digest_out,256'hF56A912EA719D7337718913FA1F60D699E390C7B0B4664508AD7A19AEC6E209F);
 
         #2
         //CLK 68
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
+        `assert(foo.digest_out,256'h305338ACEF18024CDE324C26CFC970FC8390FDB5AC293A2600D159A2473CC674);
 
         $finish;
     end
