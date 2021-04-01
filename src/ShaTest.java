@@ -112,8 +112,8 @@ public class ShaTest {
             System.out.println("####");
 
             String out2AsHex = DatatypeConverter.printHexBinary(out2);
-            //String msg3Str = out2AsHex + padding2;
-            String msg3Str = "1A1A1A1A2A2A2A2A3A3A3A3A4A4A4A4A5A5A5A5A6A6A6A6A7A7A7A7A8A8A8A8A" + padding2;
+            String msg3Str = out2AsHex + padding2;
+            //String msg3Str = "1A1A1A1A2A2A2A2A3A3A3A3A4A4A4A4A5A5A5A5A6A6A6A6A7A7A7A7A8A8A8A8A" + padding2;
             byte[] msg3 = DatatypeConverter.parseHexBinary(msg3Str);
 
             digest.implReset();
