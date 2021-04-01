@@ -91,9 +91,9 @@ public class ShaTest {
                            //3C50DFD306CF40ACFC9096F83EBB3A8DD561564BAA4CF0777C68C9B968A677DF
 
         byte[] msg1 = DatatypeConverter.parseHexBinary(version + hashPrevBlock + merkleRoot_a );
-        //byte[] msg2 = DatatypeConverter.parseHexBinary(merkleRoot_b + time + difficulty + successNonce + padding );
+        byte[] msg2 = DatatypeConverter.parseHexBinary(merkleRoot_b + time + difficulty + successNonce + padding );
         //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801111111112222222233333333" + padding );
-        byte[] msg2 = DatatypeConverter.parseHexBinary("252db801444444445555555566666666" + padding );
+        //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801444444445555555566666666" + padding );
         //byte[] msg2 = DatatypeConverter.parseHexBinary("252db801202020203030303040404040" + padding );
 
 
