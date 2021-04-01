@@ -149,9 +149,6 @@ module sha2_tb();
         $display("MCo: At time %t, value = %h %h",$time, foo.valid_out, foo.digest_out );
         `assert(foo.counter_reg,63);
         `assert(foo.ins_main_loop_63.digest_out_wire,256'hE60E116DBB0F2D17486456C9776FD9E6E93412D5250EF7B412FB586039701CF6);
-        //`assert(foo.digest_out,256'hE60E116DBB0F2D17486456C9776FD9E6E93412D5250EF7B412FB586039701CF6);
-
-//TODO: valid_out
 
         #2
         //CLK 64
@@ -160,7 +157,6 @@ module sha2_tb();
         $display("MC63: At time %t, value = %h %h %h",$time, foo.ins_main_loop_63.digest_in, foo.ins_main_loop_63.w_i, foo.ins_main_loop_63.digest_out_wire );
         $display("MCo: At time %t, value = %h %h",$time, foo.valid_out, foo.digest_out );
         `assert(foo.ins_main_loop_63.digest_out_wire,256'hD69C4CDA187EBD73AE0023363C9B48BC2EDFBEE00F21CEAD82FE11281A3D6E15);
-        //`assert(foo.digest_out,256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467);
         `assert(foo.valid_out,0);
 
         #2
@@ -169,7 +165,6 @@ module sha2_tb();
         $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
         $display("status: At time %t, write = %h valid = %h",$time, foo.write_en, foo.valid_out );
         $display("MCo: At time %t, value = %h %h",$time, foo.valid_out, foo.digest_out );
-
         `assert(foo.valid_out,1);
         `assert(foo.digest_out,256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467);
         `assert(foo.ins_main_loop_63.digest_out_wire,256'h5E8383369890424E07F0FAF02B6175AA239F7FD163FD100C7232C9CBD62715C4);
@@ -179,16 +174,14 @@ module sha2_tb();
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
         $display("MCf: At time %t, value = %h %h %h",$time, foo.digest_loop_63, foo.digest_intial, foo.digest_out_reg );
         $display("status: At time %t, write = %h valid = %h",$time, foo.write_en, foo.valid_out );
+        `assert(foo.digest_out,256'hCC2C548F92AD138966F49C583141736125D5553890A78A5B7D07F89E5604C586);
         `assert(foo.ins_main_loop_63.digest_out_wire,256'hB5E3E49077511333C7B39F2AEA0A057F9E08F28289FA0B17BF32FA350DFADB62);
-
-//        `assert(foo.digest_out_reg,256'hDB9E1922353D832D0158CFEB6C16048BE029A92DA694B3620D053FD675377467);
-//        `assert(foo.valid_out,1);
 
         #2
         //CLK 66
         $display("CNT At time %t, %d ",$time, foo.counter_reg );
-//        `assert(foo.digest_out_reg,256'hEBE0C4A39D8793BA31BD4202582D0FB11AB66A8FCEBEC29730AF727CAC1E9340);
         `assert(foo.ins_main_loop_63.digest_out_wire,256'h8058DF464B7A211ACCFEF1F3EA0D8C7A6FFE05D8D84931FEF6BEC4ED600E6C5A);
+        `assert(foo.digest_out,256'h54138AEB12BE9864C0E574122007A04F1A951629E582CBBA6C3CB14111EE6D35);
 
         #2
         //CLK 67
