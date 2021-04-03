@@ -1548,6 +1548,8 @@ module sha256_3_pipeline(
 	assign w_i_loop_62 =  block_loop_62[31:0];
 	assign w_i_loop_63 =  block_loop_63[31:0];
 
+	assign digest_out = digest_out_reg;
+	assign valid_out = valid_out_reg;
 
 	///////
 	always @(posedge CLK or negedge RST)
@@ -1583,7 +1585,6 @@ module sha256_3_pipeline(
             end
 		end
 	end
-	assign digest_out = digest_out_reg;
-	assign valid_out = valid_out_reg;
+
 
 endmodule
