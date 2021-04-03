@@ -12,13 +12,13 @@ module sha_hasher(
             input	wire	[255:0]	digest_intial, //This gets added to result of MC at end. This is the normal SHA256 result of previous run.
             input	wire	[255:0]	digest_in, //This is used to continue input to he MC stage (midState) It is clocked ahead by 1 W.
 
-            input	wire	[32:0] merkle_in,
-            input	wire	[32:0] time_in,
-            input	wire	[32:0] target_in,
-            input	wire	[32:0] nonce_in,
+            input	wire	[31:0] merkle_in,
+            input	wire	[31:0] time_in,
+            input	wire	[31:0] target_in,
+            input	wire	[31:0] nonce_in,
             output  wire           valid_out, //flag when solution found
-            output  wire    [32:0] time_out,  //Time of solution
-            output	wire	[32:0] nonce_out  //nonce of solution
+            output  wire    [31:0] time_out,  //Time of solution
+            output	wire	[31:0] nonce_out  //nonce of solution
 );
 
 //TODO: counter on nonce and time
@@ -33,14 +33,14 @@ module sha_hasher(
     wire         valid_out_2;
     wire         valid_out_3;
 
-    reg [32:0]   time_counter_reg;
-    reg [32:0]   nonce_counter_reg;
+    reg [31:0]   time_counter_reg;
+    reg [31:0]   nonce_counter_reg;
 
 
     sha256_2_pipeline sha2(.CLK(CLK),
                           .RST(RST),
                           .write_en(write_en),
-                          .digest_intial(digest_initial), //TODO: typo
+                          .digest_intial(digest_intial),
                           .digest_in(digest_in),
                           .block_in({merkle_in,time_counter_reg,target_in,nonce_counter_reg}),
                           .digest_out(digest_out_2),
@@ -55,16 +55,18 @@ module sha_hasher(
 
 
     assign valid_out = valid_out_3;
+    assign nonce_out = nonce_counter_reg;
+    assign time_out = time_counter_reg;
 
 	always @(posedge CLK or negedge RST)
 	begin
 		if(RST == 1'b0) begin
 		    //###RESET
 			//digest_out_reg <= 256'b0;
-			valid_out <= 1'b0;
+			//valid_out <= 1'b0;
 			nonce_counter_reg <= nonce_in;
 			time_counter_reg <= time_in;
-			write_en <= 1'b1;
+			//write_en <= 1'b1;
 		end
 		else begin
 			if(write_en == 1'b1 ) begin
@@ -77,10 +79,9 @@ module sha_hasher(
 			    //#### Do nothing. No Changes to all outputs
                 time_counter_reg <= time_counter_reg;
                 nonce_counter_reg <= nonce_counter_reg;
-                valid_counter_reg <= valid_counter_reg;
-                valid_out <= valid_out;
-                nonce_out <= nonce_out;
-                time_out <= time_out;
+                //valid_out <= valid_out;
+//                nonce_out <= nonce_out;
+//                time_out <= time_out;
 
             end
 		end
