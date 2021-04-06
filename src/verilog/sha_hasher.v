@@ -18,18 +18,14 @@ module sha_hasher(
             input	wire	[31:0] nonce_in,
             output  wire           valid_out, //flag when solution found
             output  wire    [31:0] time_out,  //Time of solution
-            output	wire	[31:0] nonce_out  //nonce of solution
+            output	wire	[31:0] nonce_out,  //nonce of solution
+            output	wire	[255:0] result_out  //nonce of solution
 );
 
-//TODO: counter on nonce and time
-//comparator for result
-//write_en
-//time part
-//nonce part.
-
     wire [255:0] digest_out_2;
-    wire [255:0] digest_out_3;
+    //wire [255:0] digest_out_3;
 
+    wire         write_enable_2;
     wire         valid_out_2;
     wire         valid_out_3;
 
@@ -48,15 +44,17 @@ module sha_hasher(
 
     sha256_3_pipeline sha3(.CLK(CLK),
                           .RST(RST),
-                          .write_en(write_en),
+                          .write_en(write_enable_2),
                           .block_in(digest_out_2),
-                          .digest_out(digest_out_3),
+                          .digest_out(result_out),
                           .valid_out(valid_out_3) );
-
 
     assign valid_out = valid_out_3;
     assign nonce_out = nonce_counter_reg;
     assign time_out = time_counter_reg;
+    //assign result_out = digest_out_3;
+    assign write_enable_2 = write_en & valid_out_2;
+
 
 	always @(posedge CLK or negedge RST)
 	begin
@@ -70,19 +68,16 @@ module sha_hasher(
 		end
 		else begin
 			if(write_en == 1'b1 ) begin
-
+			    //Normal operation. Increment and check
                 //Check results set flags, set outputs
                 {time_counter_reg,nonce_counter_reg} <= {time_counter_reg,nonce_counter_reg} + 1;
-
+                //nonce_counter_reg <= nonce_counter_reg +1;
 			end
 			else begin
+			    //Write disabled. Do Nothing.
 			    //#### Do nothing. No Changes to all outputs
                 time_counter_reg <= time_counter_reg;
                 nonce_counter_reg <= nonce_counter_reg;
-                //valid_out <= valid_out;
-//                nonce_out <= nonce_out;
-//                time_out <= time_out;
-
             end
 		end
 	end

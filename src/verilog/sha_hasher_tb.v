@@ -16,6 +16,7 @@ module sha_hasher_tb();
     wire vo;
     wire [31:0] to;
     wire [31:0] no;
+    wire [255:0] result_out;
 
 
     always begin
@@ -33,27 +34,22 @@ module sha_hasher_tb();
                     .nonce_in(ni),
                     .valid_out(vo),
                     .time_out(to),
-                    .nonce_out(no)
+                    .nonce_out(no),
+                    .result_out(result_out)
                     );
 
 
     initial begin
-         $monitor("Hello World shtb");
+         $display("Hello World");
          $dumpfile("test.vcd");
          $dumpvars(0,sha_hasher_tb);
 
         //Initialize clock
 
-        dii=256'h0;
-        di =256'h0;
-
-
-        CLK = 0;
-        RST = 0;
-        write_en=1;
-        #4
-        RST=1; //Normal operation
-
+        mi = 32'hEEEEEEEE;
+        ti = 32'hAAAAAAA1;
+        tai = 32'h99999999;
+        ni = 32'hFFFFFFF0;
 
         //Actual result of msg1 Added on to the result at end of stage 63
         dii=256'hF59007B57A2E5616B8F47922F4A62AA5F6F596588185BBAEFA09E7763BC75771;
@@ -61,14 +57,65 @@ module sha_hasher_tb();
         di =256'hF7A528B9F59007B57A2E5616B8F47922F2C1816DF6F596588185BBAEFA09E776;
 
 
+        CLK = 0;
+        RST = 0;
+        write_en=1;
 
+        #4
+        RST=1; //Normal operation
+            `assert(foo.time_counter_reg,32'hAAAAAAA1);
+            `assert(foo.nonce_counter_reg,32'hFFFFFFF0);
         #2
-
+            `assert(foo.time_counter_reg,32'hAAAAAAA1);
         #2
-
         #2
+        #24
+        #2
+        #2
+            `assert(foo.time_counter_reg,32'hAAAAAAA2);
+            `assert(foo.nonce_counter_reg,32'h00000001);
+        #2
+        RST=0;
+            mi = 32'h252db801;
+            ti = 32'h130dae51;
+            tai = 32'h6461011a;
+            ni = 32'h3aeb9bb0;
+        #4
+            RST=1; //NORMAL operation
+            `assert(foo.valid_out,0);
+            `assert(foo.nonce_counter_reg,32'h3aeb9bb0);
+        #2
+            `assert(foo.nonce_counter_reg,32'h3aeb9bb1);
+        #126
+            `assert(foo.valid_out_2,0); //ODD This isn't what I expect
+            `assert(foo.write_enable_2,0);
+        #2
+            //First clock where SHA2 output is good. this is the hash of the first input
+            `assert(foo.valid_out_2,1);
+            `assert(foo.digest_out_2,256'hD113D3BB65EAEED1EBA29A6E06640A8CFD2394C1672229D878D8CEACD8C824A2);
+            `assert(foo.write_enable_2,1);
+        #2
+            `assert(foo.valid_out_2,1);
+            `assert(foo.valid_out_3,0);
+            `assert(foo.write_enable_2,1);
+        #128
+            `assert(foo.valid_out_3,0);
+            `assert(foo.valid_out,0);
+        #2
+            `assert(foo.valid_out_3,1);
+            `assert(foo.valid_out,1);
+            `assert(result_out,256'h4FC234738E7F3AC09F4432A23EAB1E707578A6310F0EB320515D61001CB18E75);
+        #2
+            `assert(result_out,256'hCCA2649D234850E0FD84EDB32B06AE3E415E85F5D19A59622B91F8607B948287);
+        #14
+            `assert(result_out,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
 
 
+            //TODO: need to calculate the rollback
+            `assert(foo.time_out,32'h130dae51);
+            `assert(foo.nonce_out,32'h3aeb9bb8);
+
+        $display("TESTS PASSED");
         $finish;
     end
 
