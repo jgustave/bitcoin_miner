@@ -129,9 +129,26 @@ public class ShaTest {
                 throw new RuntimeException("didn't verify");
             }
 
-            //pre: 0xF7A528B9 0xF59007B5 0x7A2E5616 0xB8F47922 0xF2C1816D 0xF6F59658 0x8185BBAE 0xFA09E776
+            //target = 0x6461011a (flip endian == 0x1a016164)
+            //Exponent = 1a = 26  ...46 0's
+            //coeff    = 016164
+            //Coefficient * 2**(8*(26 - 3)) == 46 trailing 0's
 
-            //+1: 0x10F2957C 0xF7A528B9 0xF59007B5 0x7A2E5616 0x25BEF710 0xF2C1816D 0xF6F59658 0x8185BBAE
+            // = 0x 0000 00000000 016164 000000 00000000 00000000 00000000 00000000 00000000
+
+            //0x0000000000000161640000000000000000000000000000000000000000000000
+            //flip endian
+            //0x0000000000000000000000000000000000000000000000646101000000000000
+            //TODO: How to compare????
+            //0x5c8ad782c007cc563f8db735180b35dab8c983d172b57e2c2701000000000000
+
+            //or flip the other way (the hash) .. lower hash..is more leading 0's, is more difficult
+            //0x00000000000001272c7eb572d183c9b8da350b1835b78d3f56cc07c082d78a5c
+            //TODO: Compare to ... hash is <= difficulty
+            //0x0000000000000161640000000000000000000000000000000000000000000000
+
+            //Note we did everything in little endian
+
         }catch(Exception e) {
             e.printStackTrace();
         }
