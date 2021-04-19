@@ -136,6 +136,7 @@ public class ShaTest {
 
             // = 0x 0000 00000000 016164 000000 00000000 00000000 00000000 00000000 00000000
 
+            //Big endian
             //0x0000000000000161640000000000000000000000000000000000000000000000
             //flip endian
             //0x0000000000000000000000000000000000000000000000646101000000000000
@@ -144,10 +145,24 @@ public class ShaTest {
 
             //or flip the other way (the hash) .. lower hash..is more leading 0's, is more difficult
             //0x00000000000001272c7eb572d183c9b8da350b1835b78d3f56cc07c082d78a5c
-            //TODO: Compare to ... hash is <= difficulty
+            //TODO: Compare to ... hash is < difficulty
             //0x0000000000000161640000000000000000000000000000000000000000000000
 
+            //0x00000000000001272c7eb572d183c9b8da350b1835b78d3f56cc07c082d78a5c
+            //0x000000000000 0161640000000000000000000000000000000000000000000000
+
+            //26-3 = 23 = 46 0's rhs
+            //64
+
+            //64- (6+((26-3)*2))
+            //58 - ((26-3)*2)
             //Note we did everything in little endian
+
+            //4 * (58 - ((26-3)*2))
+            //4 * (58 - ((z-3)*2))
+            //8 * (32 - z)
+
+            //256 -
 
         }catch(Exception e) {
             e.printStackTrace();
@@ -309,3 +324,6 @@ public class ShaTest {
                  return lf_S(x, 17) ^ lf_S(x, 19) ^ lf_R(x, 10);
              }
 }
+
+
+
