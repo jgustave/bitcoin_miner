@@ -43,6 +43,8 @@ module sha_hasher(
     reg valid_out_reg;
     wire valid_out_wire;
 
+    wire [63:0]   reverse_wire;
+
     sha256_2_pipeline sha2(.CLK(CLK),
                           .RST(RST),
                           .write_en(write_en),
@@ -64,6 +66,8 @@ module sha_hasher(
     //assign time_out = time_counter_reg;
     //assign result_out = digest_out_3;
     assign write_enable_2 = write_en & valid_out_2;
+
+    assign reverse_wire = {time_counter_reg,nonce_counter_reg}-131;
 
     assign difficulty_swap2 = difficulty_reg;
     //Change endianness for comparison.
