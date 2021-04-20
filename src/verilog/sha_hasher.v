@@ -19,7 +19,7 @@ module sha_hasher(
             output  wire           valid_out, //flag when solution found
             output  wire    [31:0] time_out,  //Time of solution
             output	wire	[31:0] nonce_out,  //nonce of solution
-            output	wire	[255:0] result_out  //nonce of solution
+            output	wire	[255:0] result_out  //solution
 );
 
     //Connection from 2nd to 3rd stage
