@@ -62,14 +62,8 @@ module sha_hasher(
                           .digest_out(result_out_internal),
                           .valid_out(valid_out_3) );
 
-
-    assign write_enable_3 = write_en & valid_out_2;
     assign difficulty = (256'b0 | target_in[31:8]) << (8 * ( 32 - target_in[7:0] ));
-    assign result_out = !valid_out? 255'b0 : result_out_internal;
-    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
-    assign nonce_out = reverse_wire[31:0];
-    assign time_out = reverse_wire[63:32];
-
+    assign write_enable_3 = write_en & valid_out_2;
 
     //Change endianness for comparison.
     assign difficulty_swap = {{difficulty[7:0]},
@@ -141,6 +135,10 @@ module sha_hasher(
 
     //detect solution found
     assign valid_out = valid_out_3 & result_swap < difficulty_swap;
+    assign result_out = !valid_out? 255'b0 : result_out_internal;
+    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
+    assign nonce_out = reverse_wire[31:0];
+    assign time_out = reverse_wire[63:32];
 
 
 	always @(posedge CLK or negedge RST)
