@@ -1,7 +1,7 @@
 //For actual synthesys in xilinx
 
 
-module sha2_tb(
+module main_driver(
     input clk,              // 100MHz clock
     input rst_n,            // reset button (active low)
     output [7:0] led       // 8 user controllable LEDs
@@ -35,7 +35,7 @@ module sha2_tb(
     assign nonce_in = 32'h3aeb9bb0;
 
     //Board LED outputs
-    //assign led = status_reg;
+    assign led = status_reg;
 
     sha_hasher foo( .CLK(clk),
                     .RST(rst),
@@ -75,7 +75,7 @@ module sha2_tb(
 	        status_reg <= status_reg & 8'b11111101;
 	    end
 
-	    led <= status_reg;
+	    //led <= status_reg;
 	end
 
 
