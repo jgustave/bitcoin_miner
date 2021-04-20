@@ -4,8 +4,6 @@
 //includes itteration, just watch for status out.
 //That way we can put the interface in another module.
 
-//Note [7:0] means little endian. [0:7] is big endian
-
 module sha_hasher(
             input 	wire 			CLK,
             input	wire			RST,
@@ -41,8 +39,6 @@ module sha_hasher(
 
     wire [63:0]   reverse_wire; //solution.
     wire [255:0]  result_out_internal;
-
-    reg stop_all_reg;
 
     //second stage
     sha256_2_pipeline sha2(.CLK(CLK),
@@ -144,20 +140,19 @@ module sha_hasher(
 	always @(posedge CLK or negedge RST)
 	begin
 		if(RST == 1'b0) begin
-            stop_all_reg=0;
-
 		    //###RESET
 			nonce_counter_reg <= nonce_in;
 			time_counter_reg <= time_in;
 		end
 		else begin
-			if(!stop_all_reg & write_en == 1'b1 ) begin
+			if(write_en == 1'b1 ) begin
 			    if ( valid_out ) begin
-			        stop_all_reg=1; //TODO: needed?
+			        //do nothing.
+                    time_counter_reg <= time_counter_reg;
+                    nonce_counter_reg <= nonce_counter_reg;
 			    end
 			    else begin
-                    //Normal operation. Increment and check
-                    //Check results set flags, set outputs
+                    //Normal operation. Increment search
                     {time_counter_reg,nonce_counter_reg} <= {time_counter_reg,nonce_counter_reg} + 1;
                 end
 			end
@@ -166,8 +161,6 @@ module sha_hasher(
 			    //#### Do nothing. No Changes to all outputs
                 time_counter_reg <= time_counter_reg;
                 nonce_counter_reg <= nonce_counter_reg;
-                stop_all_reg <= stop_all_reg;
-                //TODO: assign other floating outputs.
             end
 		end
 	end
