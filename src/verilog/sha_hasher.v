@@ -41,8 +41,6 @@ module sha_hasher(
     wire [255:0]  difficulty_swap;
     wire [255:0]  result_swap;
 
-    wire valid_out_wire;
-
     wire [63:0]   reverse_wire;
 
     reg stop_all_reg;
@@ -53,7 +51,7 @@ module sha_hasher(
     //second stage
     sha256_2_pipeline sha2(.CLK(CLK),
                           .RST(RST),
-                          .write_en(!stop_all_reg & write_en),
+                          .write_en(write_en & !valid_out),
                           .digest_intial(digest_intial),
                           .digest_in(digest_in),
                           .block_in({merkle_in,time_counter_reg,target_in,nonce_counter_reg}),
@@ -63,7 +61,7 @@ module sha_hasher(
     //third stage
     sha256_3_pipeline sha3(.CLK(CLK),
                           .RST(RST),
-                          .write_en(!stop_all_reg & write_enable_3),
+                          .write_en(write_enable_3 & !valid_out),
                           .block_in(digest_out_2),
                           .digest_out(result_out),
                           .valid_out(valid_out_3) );
@@ -71,8 +69,8 @@ module sha_hasher(
 
 
     //back out the solution TODO: make conditional on solved.
-    //assign reverse_wire = !valid_out_wire? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
-    assign reverse_wire = {time_counter_reg,nonce_counter_reg}-131;
+    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
+    //assign reverse_wire = {time_counter_reg,nonce_counter_reg}-131;
 
     assign difficulty = (256'b0 | target_in[31:8]) << (8 * ( 32 - target_in[7:0] ));
 
@@ -145,11 +143,8 @@ module sha_hasher(
                               };
 
     //detect solution found
-    assign valid_out = valid_out_3;
+    assign valid_out = valid_out_3 & result_swap < difficulty_swap;
     assign write_enable_3 = write_en & valid_out_2;
-    assign valid_out_wire = result_swap < difficulty_swap;
-
-    //assign
 
 	always @(posedge CLK or negedge RST)
 	begin
@@ -162,21 +157,16 @@ module sha_hasher(
 		end
 		else begin
 			if(!stop_all_reg & write_en == 1'b1 ) begin
-			    if ( valid_out_3 & valid_out_wire ) begin
-			        $display("################# %h %h", !stop_all_reg, write_enable_3 );
-			        //write_foo=0;
-			        stop_all_reg=1;
-			        $display(". %h %h", !stop_all_reg, write_enable_3 );
+			    if ( valid_out ) begin
+			        stop_all_reg=1; //TODO: needed?
 			    end
 			    else begin
-			        $display("x %h %h", !stop_all_reg, write_enable_3 );
                     //Normal operation. Increment and check
                     //Check results set flags, set outputs
                     {time_counter_reg,nonce_counter_reg} <= {time_counter_reg,nonce_counter_reg} + 1;
                 end
 			end
 			else begin
-			    $display("PASS %h %h", !stop_all_reg, write_enable_3 );
 			    //Write disabled. Do Nothing.
 			    //#### Do nothing. No Changes to all outputs
                 time_counter_reg <= time_counter_reg;
