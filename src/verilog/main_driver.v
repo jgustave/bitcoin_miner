@@ -32,13 +32,13 @@ module main_driver(
     assign merkle_in = 32'h252db801;
     assign time_in = 32'h130dae51;
     assign target_in = 32'h6461011a;
-    assign nonce_in = 32'h3aeb9bb0;
+    assign nonce_in = 32'h0;
 
     //Board LED outputs
     assign led = status_reg;
 
     sha_hasher foo( .CLK(clk),
-                    .RST(rst),
+                    .RST(!rst),
                     .write_en(1),
                     .digest_intial(digest_initial_in),
                     .digest_in(digest_in),
@@ -55,24 +55,36 @@ module main_driver(
 
 
 
-    always @(posedge clk)
+   always @(posedge clk)
 	begin
 	    if( rst ) begin
 	        //active low.. normal op
-	        status_reg <= status_reg | 8'b10000000;
+	        //status_reg <= status_reg | 8'b11000000;
+          status_reg[0] <= 1;
+          status_reg[1] <= 1;
 	    end
 	    else begin
 	        //resetting
-	        status_reg <= 8'b00000000;
+	        //status_reg <= status_reg & 8'b00111111;
+          status_reg[0] <= 0;
+          status_reg[1] <= 0;
+          //status_reg[3] <= 1;
 	    end
 
 	    if( valid_out ) begin
 	        //found solution
-	        status_reg <= status_reg | 8'b00000010;
+	        //status_reg <= status_reg | 8'b00000010;
+          //status_reg <= status_reg | 8'b00001111;
+          status_reg[7] <= 1;
+          status_reg[6] <= 1;
+          status_reg[5] <= 1;
 	    end
 	    else begin
-	        //no solution yet.
-	        status_reg <= status_reg & 8'b11111101;
+//	        //no solution yet.
+//	        status_reg <= status_reg & 8'b11111101;
+          status_reg[7] <= 0;
+          status_reg[6] <= 0;
+          status_reg[5] <= 1;
 	    end
 
 	    //led <= status_reg;
