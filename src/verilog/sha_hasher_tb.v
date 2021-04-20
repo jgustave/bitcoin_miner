@@ -25,7 +25,7 @@ module sha_hasher_tb();
 
     sha_hasher foo( .CLK(CLK),
                     .RST(RST),
-                    .write_en,
+                    .write_en(write_en),
                     .digest_intial(dii),
                     .digest_in(di),
                     .merkle_in(mi),
