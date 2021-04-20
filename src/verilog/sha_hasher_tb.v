@@ -60,15 +60,15 @@ module sha_hasher_tb();
         CLK = 0;
         RST = 0;
         write_en=1;
-        $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty_reg );
+        $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
 
         #4
         RST=1; //Normal operation
-            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty_reg );
+            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
             `assert(foo.time_counter_reg,32'hAAAAAAA1);
             `assert(foo.nonce_counter_reg,32'hFFFFFFF0);
         #2
-            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty_reg );
+            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
             `assert(foo.time_counter_reg,32'hAAAAAAA1);
         #2
         #2
@@ -95,16 +95,16 @@ module sha_hasher_tb();
             `assert(foo.nonce_counter_reg,32'h3aeb9bb1);
         #126
             `assert(foo.valid_out_2,0); //ODD This isn't what I expect
-            `assert(foo.write_enable_2,0);
+            `assert(foo.write_enable_3,0);
         #2
             //First clock where SHA2 output is good. this is the hash of the first input
             `assert(foo.valid_out_2,1);
             `assert(foo.digest_out_2,256'hD113D3BB65EAEED1EBA29A6E06640A8CFD2394C1672229D878D8CEACD8C824A2);
-            `assert(foo.write_enable_2,1);
+            `assert(foo.write_enable_3,1);
         #2
             `assert(foo.valid_out_2,1);
             `assert(foo.valid_out_3,0);
-            `assert(foo.write_enable_2,1);
+            `assert(foo.write_enable_3,1);
         #128
             `assert(foo.valid_out_3,0);
             `assert(foo.valid_out,0);
@@ -114,18 +114,24 @@ module sha_hasher_tb();
             `assert(result_out,256'h4FC234738E7F3AC09F4432A23EAB1E707578A6310F0EB320515D61001CB18E75);
         #2
             `assert(result_out,256'hCCA2649D234850E0FD84EDB32B06AE3E415E85F5D19A59622B91F8607B948287);
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_reg, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
             $display("rev: At time %t, %h",$time, foo.reverse_wire);
         #12
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_reg, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
             $display("rev: At time %t, %h",$time, foo.reverse_wire);
         #2
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("rev: At time %t, %h",$time, foo.reverse_wire);
             `assert(result_out,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
             `assert(foo.reverse_wire,64'h130dae513aeb9bb8);
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_reg, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);                        
         #2
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_reg, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+        #2
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
+            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+        #2
+            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out_wire, foo.result_swap, foo.difficulty_swap );
             $display("rev: At time %t, %h",$time, foo.reverse_wire);
 
             //TODO: need to calculate the rollback

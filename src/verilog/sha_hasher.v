@@ -24,86 +24,91 @@ module sha_hasher(
             output	wire	[255:0] result_out  //nonce of solution
 );
 
+    //Connection from 2nd to 3rd stage
     wire [255:0] digest_out_2;
-    //wire [255:0] digest_out_3;
 
-    wire         write_enable_2;
-    wire         valid_out_2;
-    wire         valid_out_3;
+
+    wire         write_enable_3; //Start clocking the third stage
+    wire         valid_out_2; //Second stage pipeline output valid
+    wire         valid_out_3; //third...
 
     reg [31:0]   time_counter_reg;
     reg [31:0]   nonce_counter_reg;
 
-    wire [255:0] difficulty;
-    reg [255:0]  difficulty_reg;
+    //wire [255:0] difficulty;
+    wire [255:0]  difficulty;
 
     wire [255:0]  difficulty_swap;
     wire [255:0]  result_swap;
 
-    reg valid_out_reg;
     wire valid_out_wire;
 
     wire [63:0]   reverse_wire;
 
+    reg stop_all_reg;
+    wire write_en_out;
+
+    wire result_found;
+
+    //second stage
     sha256_2_pipeline sha2(.CLK(CLK),
                           .RST(RST),
-                          .write_en(write_en),
+                          .write_en(!stop_all_reg & write_en),
                           .digest_intial(digest_intial),
                           .digest_in(digest_in),
                           .block_in({merkle_in,time_counter_reg,target_in,nonce_counter_reg}),
                           .digest_out(digest_out_2),
                           .valid_out(valid_out_2) );
 
+    //third stage
     sha256_3_pipeline sha3(.CLK(CLK),
                           .RST(RST),
-                          .write_en(write_enable_2),
+                          .write_en(!stop_all_reg & write_enable_3),
                           .block_in(digest_out_2),
                           .digest_out(result_out),
                           .valid_out(valid_out_3) );
 
-    assign valid_out = valid_out_3;
-    //assign nonce_out = nonce_counter_reg;
-    //assign time_out = time_counter_reg;
-    //assign result_out = digest_out_3;
-    assign write_enable_2 = write_en & valid_out_2;
 
+
+    //back out the solution TODO: make conditional on solved.
+    //assign reverse_wire = !valid_out_wire? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
     assign reverse_wire = {time_counter_reg,nonce_counter_reg}-131;
 
-    assign difficulty_swap2 = difficulty_reg;
-    //Change endianness for comparison.
+    assign difficulty = (256'b0 | target_in[31:8]) << (8 * ( 32 - target_in[7:0] ));
 
-    assign difficulty_swap = {{difficulty_reg[7:0]},
-                              {difficulty_reg[15:8]},
-                              {difficulty_reg[23:16]},
-                              {difficulty_reg[31:24]},
-                              {difficulty_reg[39:32]},
-                              {difficulty_reg[47:40]},
-                              {difficulty_reg[55:48]},
-                              {difficulty_reg[63:56]},
-                              {difficulty_reg[71:64]},
-                              {difficulty_reg[79:72]},
-                              {difficulty_reg[87:80]},
-                              {difficulty_reg[95:88]},
-                              {difficulty_reg[103:96]},
-                              {difficulty_reg[111:104]},
-                              {difficulty_reg[119:112]},
-                              {difficulty_reg[127:120]},
-                              {difficulty_reg[135:128]},
-                              {difficulty_reg[143:136]},
-                              {difficulty_reg[151:144]},
-                              {difficulty_reg[159:152]},
-                              {difficulty_reg[167:160]},
-                              {difficulty_reg[175:168]},
-                              {difficulty_reg[183:176]},
-                              {difficulty_reg[191:184]},
-                              {difficulty_reg[199:192]},
-                              {difficulty_reg[207:200]},
-                              {difficulty_reg[215:208]},
-                              {difficulty_reg[223:216]},
-                              {difficulty_reg[231:224]},
-                              {difficulty_reg[239:232]},
-                              {difficulty_reg[247:240]},
-                              {difficulty_reg[255:248]}
+    //Change endianness for comparison.
+    assign difficulty_swap = {{difficulty[7:0]},
+                              {difficulty[15:8]},
+                              {difficulty[23:16]},
+                              {difficulty[31:24]},
+                              {difficulty[39:32]},
+                              {difficulty[47:40]},
+                              {difficulty[55:48]},
+                              {difficulty[63:56]},
+                              {difficulty[71:64]},
+                              {difficulty[79:72]},
+                              {difficulty[87:80]},
+                              {difficulty[95:88]},
+                              {difficulty[103:96]},
+                              {difficulty[111:104]},
+                              {difficulty[119:112]},
+                              {difficulty[127:120]},
+                              {difficulty[135:128]},
+                              {difficulty[143:136]},
+                              {difficulty[151:144]},
+                              {difficulty[159:152]},
+                              {difficulty[167:160]},
+                              {difficulty[175:168]},
+                              {difficulty[183:176]},
+                              {difficulty[191:184]},
+                              {difficulty[199:192]},
+                              {difficulty[207:200]},
+                              {difficulty[215:208]},
+                              {difficulty[223:216]},
+                              {difficulty[231:224]},
+                              {difficulty[239:232]},
+                              {difficulty[247:240]},
+                              {difficulty[255:248]}
                               };
     assign result_swap = {{result_out[7:0]},
                               {result_out[15:8]},
@@ -138,39 +143,46 @@ module sha_hasher(
                               {result_out[247:240]},
                               {result_out[255:248]}
                               };
+
+    //detect solution found
+    assign valid_out = valid_out_3;
+    assign write_enable_3 = write_en & valid_out_2;
     assign valid_out_wire = result_swap < difficulty_swap;
 
-
-    //assign {time_out,nonce_out} <= {time_out,nonce_out} - 64
+    //assign
 
 	always @(posedge CLK or negedge RST)
 	begin
 		if(RST == 1'b0) begin
-		    difficulty_reg <= (256'b0 | target_in[31:8]) << (8 * ( 32 - target_in[7:0] ));
+            stop_all_reg=0;
 
 		    //###RESET
-			//digest_out_reg <= 256'b0;
-			//valid_out <= 1'b0;
 			nonce_counter_reg <= nonce_in;
 			time_counter_reg <= time_in;
-			//write_en <= 1'b1;
-			valid_out_reg = 0;
 		end
 		else begin
-			if(write_en == 1'b1 ) begin
-			    //Normal operation. Increment and check
-                //Check results set flags, set outputs
-                {time_counter_reg,nonce_counter_reg} <= {time_counter_reg,nonce_counter_reg} + 1;
-                //nonce_counter_reg <= nonce_counter_reg +1;
-                //{time_out,nonce_out} <= {time_out,nonce_out} - 64;
-
-                valid_out_reg <= result_swap < difficulty_swap;
+			if(!stop_all_reg & write_en == 1'b1 ) begin
+			    if ( valid_out_3 & valid_out_wire ) begin
+			        $display("################# %h %h", !stop_all_reg, write_enable_3 );
+			        //write_foo=0;
+			        stop_all_reg=1;
+			        $display(". %h %h", !stop_all_reg, write_enable_3 );
+			    end
+			    else begin
+			        $display("x %h %h", !stop_all_reg, write_enable_3 );
+                    //Normal operation. Increment and check
+                    //Check results set flags, set outputs
+                    {time_counter_reg,nonce_counter_reg} <= {time_counter_reg,nonce_counter_reg} + 1;
+                end
 			end
 			else begin
+			    $display("PASS %h %h", !stop_all_reg, write_enable_3 );
 			    //Write disabled. Do Nothing.
 			    //#### Do nothing. No Changes to all outputs
                 time_counter_reg <= time_counter_reg;
                 nonce_counter_reg <= nonce_counter_reg;
+                stop_all_reg <= stop_all_reg;
+                //TODO: assign other floating outputs.
             end
 		end
 	end
