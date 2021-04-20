@@ -17,3 +17,4 @@ checkstyle.cache
 
 
 
+/bin/*.vcd
