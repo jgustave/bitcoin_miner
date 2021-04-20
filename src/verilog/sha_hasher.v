@@ -132,7 +132,7 @@ module sha_hasher(
     //detect solution found
     assign valid_out = valid_out_3 & result_swap < difficulty_swap;
     assign result_out = !valid_out? 255'b0 : result_out_internal;
-    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
+    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131; //idk why 131.. doesn't seem right.
     assign nonce_out = reverse_wire[31:0];
     assign time_out = reverse_wire[63:32];
 
