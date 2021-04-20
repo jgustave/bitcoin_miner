@@ -35,18 +35,14 @@ module sha_hasher(
     reg [31:0]   time_counter_reg;
     reg [31:0]   nonce_counter_reg;
 
-    //wire [255:0] difficulty;
     wire [255:0]  difficulty;
-
     wire [255:0]  difficulty_swap;
     wire [255:0]  result_swap;
 
-    wire [63:0]   reverse_wire;
+    wire [63:0]   reverse_wire; //solution.
+    wire [255:0]  result_out_internal;
 
     reg stop_all_reg;
-    wire write_en_out;
-
-    wire result_found;
 
     //second stage
     sha256_2_pipeline sha2(.CLK(CLK),
@@ -63,16 +59,17 @@ module sha_hasher(
                           .RST(RST),
                           .write_en(write_enable_3 & !valid_out),
                           .block_in(digest_out_2),
-                          .digest_out(result_out),
+                          .digest_out(result_out_internal),
                           .valid_out(valid_out_3) );
 
 
-
-    //back out the solution TODO: make conditional on solved.
-    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
-    //assign reverse_wire = {time_counter_reg,nonce_counter_reg}-131;
-
+    assign write_enable_3 = write_en & valid_out_2;
     assign difficulty = (256'b0 | target_in[31:8]) << (8 * ( 32 - target_in[7:0] ));
+    assign result_out = !valid_out? 255'b0 : result_out_internal;
+    assign reverse_wire = !valid_out? 64'b0 : {time_counter_reg,nonce_counter_reg}-131;
+    assign nonce_out = reverse_wire[31:0];
+    assign time_out = reverse_wire[63:32];
+
 
     //Change endianness for comparison.
     assign difficulty_swap = {{difficulty[7:0]},
@@ -108,43 +105,43 @@ module sha_hasher(
                               {difficulty[247:240]},
                               {difficulty[255:248]}
                               };
-    assign result_swap = {{result_out[7:0]},
-                              {result_out[15:8]},
-                              {result_out[23:16]},
-                              {result_out[31:24]},
-                              {result_out[39:32]},
-                              {result_out[47:40]},
-                              {result_out[55:48]},
-                              {result_out[63:56]},
-                              {result_out[71:64]},
-                              {result_out[79:72]},
-                              {result_out[87:80]},
-                              {result_out[95:88]},
-                              {result_out[103:96]},
-                              {result_out[111:104]},
-                              {result_out[119:112]},
-                              {result_out[127:120]},
-                              {result_out[135:128]},
-                              {result_out[143:136]},
-                              {result_out[151:144]},
-                              {result_out[159:152]},
-                              {result_out[167:160]},
-                              {result_out[175:168]},
-                              {result_out[183:176]},
-                              {result_out[191:184]},
-                              {result_out[199:192]},
-                              {result_out[207:200]},
-                              {result_out[215:208]},
-                              {result_out[223:216]},
-                              {result_out[231:224]},
-                              {result_out[239:232]},
-                              {result_out[247:240]},
-                              {result_out[255:248]}
+    assign result_swap = {{result_out_internal[7:0]},
+                              {result_out_internal[15:8]},
+                              {result_out_internal[23:16]},
+                              {result_out_internal[31:24]},
+                              {result_out_internal[39:32]},
+                              {result_out_internal[47:40]},
+                              {result_out_internal[55:48]},
+                              {result_out_internal[63:56]},
+                              {result_out_internal[71:64]},
+                              {result_out_internal[79:72]},
+                              {result_out_internal[87:80]},
+                              {result_out_internal[95:88]},
+                              {result_out_internal[103:96]},
+                              {result_out_internal[111:104]},
+                              {result_out_internal[119:112]},
+                              {result_out_internal[127:120]},
+                              {result_out_internal[135:128]},
+                              {result_out_internal[143:136]},
+                              {result_out_internal[151:144]},
+                              {result_out_internal[159:152]},
+                              {result_out_internal[167:160]},
+                              {result_out_internal[175:168]},
+                              {result_out_internal[183:176]},
+                              {result_out_internal[191:184]},
+                              {result_out_internal[199:192]},
+                              {result_out_internal[207:200]},
+                              {result_out_internal[215:208]},
+                              {result_out_internal[223:216]},
+                              {result_out_internal[231:224]},
+                              {result_out_internal[239:232]},
+                              {result_out_internal[247:240]},
+                              {result_out_internal[255:248]}
                               };
 
     //detect solution found
     assign valid_out = valid_out_3 & result_swap < difficulty_swap;
-    assign write_enable_3 = write_en & valid_out_2;
+
 
 	always @(posedge CLK or negedge RST)
 	begin

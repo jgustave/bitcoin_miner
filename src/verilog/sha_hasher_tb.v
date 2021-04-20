@@ -60,15 +60,15 @@ module sha_hasher_tb();
         CLK = 0;
         RST = 0;
         write_en=1;
-        $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
+        //$display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
 
         #4
         RST=1; //Normal operation
-            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
+            //$display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
             `assert(foo.time_counter_reg,32'hAAAAAAA1);
             `assert(foo.nonce_counter_reg,32'hFFFFFFF0);
         #2
-            $display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
+            //$display("D: At time %t, %h %h ",$time, foo.target_in, foo.difficulty );
             `assert(foo.time_counter_reg,32'hAAAAAAA1);
         #2
         #2
@@ -110,28 +110,38 @@ module sha_hasher_tb();
             `assert(foo.valid_out,0);
         #2
             `assert(foo.valid_out_3,1);
-            `assert(result_out,256'h4FC234738E7F3AC09F4432A23EAB1E707578A6310F0EB320515D61001CB18E75);
+            `assert(foo.result_out_internal,256'h4FC234738E7F3AC09F4432A23EAB1E707578A6310F0EB320515D61001CB18E75);
         #2
-            `assert(result_out,256'hCCA2649D234850E0FD84EDB32B06AE3E415E85F5D19A59622B91F8607B948287);
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            `assert(foo.result_out_internal,256'hCCA2649D234850E0FD84EDB32B06AE3E415E85F5D19A59622B91F8607B948287);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
         #12
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
+            `assert(foo.time_out,32'h0);
+            `assert(foo.nonce_out,32'h0);
+            `assert(result_out,256'h0);
         #2
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
             `assert(result_out,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
-            `assert(foo.reverse_wire,64'h130dae513aeb9bb8);
+            `assert(foo.result_out_internal,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
+            `assert(foo.time_out,32'h130dae51);
+            `assert(foo.nonce_out,32'h3aeb9bb8);
         #2
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
+            `assert(result_out,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
+            `assert(foo.result_out_internal,256'h5C8AD782C007CC563F8DB735180B35DAB8C983D172B57E2C2701000000000000);
+
+            `assert(foo.time_out,32'h130dae51);
+            `assert(foo.nonce_out,32'h3aeb9bb8);
         #2
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
         #2
-            $display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
-            $display("rev: At time %t, %h",$time, foo.reverse_wire);
+            //$display("ror: At time %t, %h %h %h %h",$time, foo.valid_out_3, foo.valid_out, foo.result_swap, foo.difficulty_swap );
+            //$display("rev: At time %t, %h",$time, foo.reverse_wire);
 
             //TODO: need to calculate the rollback
             //`assert(foo.time_out,32'h130dae51);
